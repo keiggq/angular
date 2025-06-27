@@ -2,84 +2,91 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductsService } from '../../services/products';
 import { ProductResponse } from '../../interfaces/product-response.interface';
+import { ProductRequest } from '../../interfaces/product-request.interface';
 import { Decimal } from 'decimal.js';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-products-list',
-  imports: [CommonModule, FormsModule],
+  selector: 'app-product-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.scss']
 })
-export class ProductsFromComponent implements OnInit {
-  products: ProductResponse[] = [];
-  filteredProducts: ProductResponse[] = [];
-  searchId: number | null = null;
-  isLoading = false;
+export class ProductFormComponent implements OnInit {
+  productForm: FormGroup;
+  isEditMode = false;
+  productId: number | null = null;
+  product: ProductResponse | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private productsService: ProductsService,
+    private route: ActivatedRoute,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.loadProducts();
+  ) {
+    this.productForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
+      price: ['', [Validators.required, Validators.min(0.01)]],
+      description: ['', [Validators.required, Validators.maxLength(1000)]],
+      manufacturer: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]]
+    });
+  }
+  cancel(): void {
+    this.router.navigate(['/products']);
   }
 
-  loadProducts(): void {
-    this.isLoading = true;
-    this.productsService.getAllProducts().subscribe({
-      next: (products) => {
-        this.products = products;
-        this.filteredProducts = [...products];
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Ошибка загрузки продуктов', err);
-        this.isLoading = false;
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.productId = +params['id'];
+        this.loadProduct(this.productId);
       }
     });
   }
 
-  searchById(): void {
-    if (!this.searchId) {
-      this.filteredProducts = [...this.products];
-      return;
-    }
-    this.filteredProducts = this.products.filter(
-      product => product.id === this.searchId
-    );
-  }
-
-  clearSearch(): void {
-    this.searchId = null;
-    this.filteredProducts = [...this.products];
-  }
-
-  formatCurrency(amount: number | Decimal): string {
-    const numericAmount = typeof amount === 'number' ? amount : Number(amount);
-    return numericAmount.toLocaleString('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 2
+  loadProduct(id: number): void {
+    this.productsService.getProductById(id).subscribe({
+      next: (product) => {
+        this.product = product;
+        this.productForm.patchValue({
+          id: product.id,
+          price: product.price,
+          description: product.quantity,
+          manufacturer: product.warrantyPeriod
+        });
+      },
+      error: (err) => console.error('Error loading product', err)
     });
   }
 
-  createNewProduct(): void {
-    this.router.navigate(['/products/new']);
-  }
+  onSubmit(): void {
+    if (this.productForm.invalid) {
+      this.productForm.markAllAsTouched();
+      return;
+    }
 
-  editProduct(id: number): void {
-    this.router.navigate(['/products/edit', id]);
-  }
+    const productData: ProductRequest = this.productForm.value;
 
-  deleteProduct(id: number): void {
-    if (confirm('Вы уверены, что хотите удалить этот продукт?')) {
-      this.productsService.deleteProduct(id).subscribe({
-        next: () => this.loadProducts(),
-        error: (err) => console.error('Ошибка удаления продукта', err)
+    if (this.isEditMode && this.productId) {
+      this.productsService.updateProduct(this.productId, productData).subscribe({
+        next: () => this.router.navigate(['/products']),
+        error: (err) => console.error('Error updating product', err)
+      });
+    } else {
+      this.productsService.createProduct(productData).subscribe({
+        next: () => this.router.navigate(['/products']),
+        error: (err) => console.error('Error creating product', err)
       });
     }
   }
+
+  get title() { return this.productForm.get('title'); }
+  get price() { return this.productForm.get('price'); }
+  get description() { return this.productForm.get('description'); }
+  get manufacturer() { return this.productForm.get('manufacturer'); }
 }

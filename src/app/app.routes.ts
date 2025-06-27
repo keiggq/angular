@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { CustomersComponent } from './customers/customers';
 import { OrdersListComponent } from './order/orders';
-import { ProductsListComponent } from './product/products';
-import { ProductsFromComponent } from './product/product-form/product-form';
+import { ProductsComponent } from './product/products';
+import { ProductFormComponent } from './product/product-form/product-form';
 import { OrderFormComponent } from './order/order-form/order-form';
 import { OrderDetailsComponent } from './order/order-details/order-details';
 import { CustomerDetailsComponent } from './customers/customer-details/customer-details';
@@ -17,9 +17,9 @@ export const routes: Routes = [
   { path: 'customers/new', component: CustomersListComponent },
   { path: 'customers/edit/:id', component: CustomersListComponent },
   { path: 'orders', component: OrdersListComponent },
-  { path: 'products', component: ProductsListComponent },
-  { path: 'products/new', component: ProductsFromComponent },
-  { path: 'products/edit/:id', component: ProductsFromComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'products/new', component: ProductFormComponent },
+  { path: 'products/edit/:id', component: ProductFormComponent },
   { path: 'orders', component: OrdersListComponent },
   { path: 'orders/new', component: OrderFormComponent },
   { path: 'orders/edit/:id', component: OrderFormComponent },

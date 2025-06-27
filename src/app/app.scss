@@ -1,86 +1,170 @@
-/* Основные стили */
+/* Основные стили с новым форматом */
 .main-header {
-  background: linear-gradient(135deg, #3a7bc8 0%, #4a90e2 100%);
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
-  display: flex;
-  justify-content: center;
-  padding: 0 20px;
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .centered-nav {
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .nav-list {
   display: flex;
-  justify-content: center;
   margin: 0;
   padding: 0;
   list-style: none;
-  height: 60px;
+  height: 70px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nav-item {
-  display: flex;
-  align-items: center;
-  margin: 0 10px;
+  position: relative;
+  margin: 0 5px;
+  
+  &:first-child {
+    margin-left: 20px;
+  }
+  
+  &:last-child {
+    margin-right: 20px;
+  }
 }
 
 .nav-link {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 0 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
+  padding: 0 1.2rem;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-  min-width: 100px;
-  text-align: center;
-
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 40px;
+  border-radius: 20px;
+  
   i {
-    font-size: 1.2rem;
-    margin-bottom: 4px;
+    font-size: 1.1rem;
+    margin-right: 8px;
+    transition: all 0.3s ease;
+  }
+
+  span {
+    position: relative;
+    top: 1px;
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    transform: translateY(-2px);
+    
+    i {
+      transform: scale(1.1);
+    }
   }
 
   &.active {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     color: white;
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 3px;
-      background-color: white;
-      border-radius: 3px 3px 0 0;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    
+    i {
+      color: white;
     }
   }
 }
 
+/* Новый стиль для правой части навигации */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  
+  a, button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  .admin-login-link {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    
+    &:hover {
+      background-color: rgba(231, 76, 60, 0.3);
+    }
+  }
+  
+  .logout-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .user-greeting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: white;
+    
+    .admin-badge {
+      background-color: #e74c3c;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+  }
+}
+
+/* Полностью новый стиль для основной области */
 .centered-main {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1400px;
+  margin: 2rem auto;
   padding: 2rem;
-  min-height: calc(100vh - 60px);
-  background-color: #f8fafc;
+  min-height: calc(100vh - 110px);
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 8px;
+  }
+}
+
+/* Новые глобальные стили для страницы */
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Анимация для плавного появления контента */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.centered-main {
+  animation: fadeIn 0.4s ease-out forwards;
 }
