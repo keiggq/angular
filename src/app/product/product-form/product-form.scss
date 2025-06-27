@@ -1,0 +1,151 @@
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+}
+
+.search-container {
+  margin-bottom: 20px;
+
+  .search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 200px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+
+      &:first-of-type {
+        background: #007bff;
+        color: white;
+
+        &:hover {
+          background: #0069d9;
+        }
+      }
+
+      &:last-of-type {
+        background: #f0f0f0;
+        color: #333;
+
+        &:hover {
+          background: #e0e0e0;
+        }
+      }
+    }
+  }
+}
+
+.no-data {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+  }
+}
+
+.actions-cell {
+  .actions {
+    display: flex;
+    gap: 8px;
+
+    button {
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: none;
+
+      i {
+        font-size: 14px;
+      }
+
+      &.btn-edit {
+        background: #ffc107;
+        color: #212529;
+
+        &:hover {
+          background: #e0a800;
+        }
+      }
+
+      &.btn-delete {
+        background: #dc3545;
+        color: white;
+
+        &:hover {
+          background: #c82333;
+        }
+      }
+    }
+  }
+}
+
+.btn-add {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+
+  &:hover {
+    background: #218838;
+  }
+
+  i {
+    font-size: 14px;
+  }
+}

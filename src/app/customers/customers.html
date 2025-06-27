@@ -1,0 +1,63 @@
+<div class="container">
+  <h2>Клиенты</h2>
+
+  <div class="search-container">
+    <div class="search-form">
+      <input type="text"
+             [(ngModel)]="searchName"
+             placeholder="Поиск по имени"
+             (keyup.enter)="searchCustomers()">
+      <select [(ngModel)]="exactMatch">
+        <option [value]="false">Точное совпадение</option>
+        <option [value]="true">Частичное совпадение</option>
+      </select>
+      <button (click)="searchCustomers()">Поиск</button>
+      <button (click)="clearSearch()" *ngIf="searchName">Очистить</button>
+    </div>
+  </div>
+
+  <div *ngIf="filteredCustomers.length === 0" class="no-data">
+    {{ searchName ? 'Клиенты по вашему запросу не найдены' : 'Клиенты не найдены' }}
+  </div>
+
+  <div *ngIf="filteredCustomers.length > 0" class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя</th>
+          <th>Телефон</th>
+          <th>Email</th>
+          <th>Карта лояльности</th>
+          <th>Скидка</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of filteredCustomers">
+          <td>{{ customer.id }}</td>
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.discountCard || 'Нет' }}</td>
+          <td>{{ customer.discountRate ? (customer.discountRate * 100 | number:'1.0-2') + '%' : 'Нет' }}</td>
+          <td class="actions-cell">
+            <div class="actions">
+              <button (click)="viewCustomerOrders(customer.id)" class="btn-view">
+                <i class="fas fa-eye"></i> <span>Заказы</span>
+              </button>
+              <button (click)="editCustomer(customer.id)" class="btn-edit">
+                <i class="fas fa-edit"></i> <span>Редактировать</span>
+              </button>
+              <button (click)="deleteCustomer(customer.id)" class="btn-delete">
+                <i class="fas fa-trash"></i> <span>Удалить</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button (click)="createNewCustomer()" class="btn-add">Добавить нового клиента</button>
+</div>

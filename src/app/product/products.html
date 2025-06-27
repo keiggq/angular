@@ -1,0 +1,59 @@
+<div class="container">
+  <h2>Продукты</h2>
+
+  <div class="search-container">
+    <div class="search-form">
+      <input type="number"
+             [(ngModel)]="searchId"
+             placeholder="Поиск по ID продукта"
+             min="1"
+             (keyup.enter)="searchById()">
+      <button (click)="searchById()">Поиск</button>
+      <button (click)="clearSearch()" *ngIf="searchId">Очистить</button>
+    </div>
+  </div>
+
+  <div *ngIf="filteredProducts.length === 0" class="no-data">
+    {{ searchId ? 'Продукты не найдены' : 'Нет доступных продуктов' }}
+  </div>
+
+  <div *ngIf="filteredProducts.length > 0" class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Наименование</th>
+          <th>Производитель</th>
+          <th>Цена</th>
+          <th>Количество</th>
+          <th>Гарантия</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts">
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.manufacturerName }} (ID: {{ product.manufacturerId }})</td>
+          <td>{{ formatCurrency(product.price) }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.warrantyPeriod }} мес.</td>
+          <td class="actions-cell">
+            <div class="actions">
+              <button (click)="editProduct(product.id)" class="btn-edit">
+                <i class="fas fa-edit"></i> Изменить
+              </button>
+              <button (click)="deleteProduct(product.id)" class="btn-delete">
+                <i class="fas fa-trash"></i> Удалить
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button (click)="createNewProduct()" class="btn-add">
+    <i class="fas fa-plus"></i> Добавить продукт
+  </button>
+</div>

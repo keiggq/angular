@@ -1,0 +1,42 @@
+<div class="order-details" *ngIf="order">
+  <h2>Детали заказа №{{ order.id }}</h2>
+
+  <div class="order-info">
+    <p><strong>Покупатель:</strong> {{ order.customerName }} (ID: {{ order.customerId }})</p>
+    <p><strong>Сотрудник:</strong> {{ order.employeeName || 'Не указан' }} <span *ngIf="order.employeeId">(ID: {{ order.employeeId }})</span></p>
+    <p><strong>Дата заказа:</strong> {{ formatDateTime(order.date) }}</p>
+    <p><strong>Общая сумма:</strong> {{ order.totalPrice | currency:'RUB':'symbol':'1.2-2' }}</p>
+    <p><strong>Статус:</strong> {{ getStatusName(order.status) }}</p>
+  </div>
+
+  <h3>Информация о товаре</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID товара</th>
+        <th>Наименование</th>
+        <th>Количество</th>
+        <th>Цена за единицу</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div *ngFor="let item of order.items">
+          {{ item.productName }} (ID: {{ item.productId }})
+          </div>
+        </td>
+        <td>
+         <div *ngFor="let item of order.items">
+          {{ item.quantity }}
+          </div>
+        </td>
+        <td>{{ order.totalPrice | currency:'RUB':'symbol-narrow':'1.2-2' }}</td> 
+      </tr>
+    </tbody>
+  </table>
+
+  <button (click)="router.navigate(['/orders'])" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Вернуться к списку заказов
+  </button>
+</div>

@@ -1,0 +1,212 @@
+.customer-details {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ecf0f1;
+  }
+
+  .customer-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 35px;
+    padding: 20px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+
+      .info-label {
+        font-weight: 600;
+        color: #4a5568;
+        min-width: 140px;
+        font-size: 15px;
+      }
+
+      .info-value {
+        color: #2d3748;
+        font-size: 15px;
+        
+        &.discount-rate {
+          font-weight: 600;
+          color: #2b6cb0;
+        }
+      }
+    }
+  }
+
+  h3 {
+    color: #2c3e50;
+    font-size: 20px;
+    margin: 30px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    th {
+      background-color: #4a5568;
+      color: white;
+      font-weight: 500;
+      padding: 14px 16px;
+      text-align: left;
+      
+      &:first-child {
+        border-top-left-radius: 8px;
+      }
+      
+      &:last-child {
+        border-top-right-radius: 8px;
+      }
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #edf2f7;
+      vertical-align: middle;
+      
+      .product-info {
+        display: flex;
+        flex-direction: column;
+        
+        .product-name {
+          font-weight: 500;
+        }
+        
+        .product-id {
+          font-size: 12px;
+          color: #718096;
+        }
+      }
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: #f7fafc;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      
+      &-pending {
+        background-color: #fffaf0;
+        color: #dd6b20;
+      }
+      
+      &-processing {
+        background-color: #ebf8ff;
+        color: #3182ce;
+      }
+      
+      &-completed {
+        background-color: #f0fff4;
+        color: #38a169;
+      }
+      
+      &-cancelled {
+        background-color: #fff5f5;
+        color: #e53e3e;
+      }
+    }
+  }
+
+  .no-orders {
+    padding: 30px;
+    text-align: center;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #e2e8f0;
+    color: #718096;
+    
+    i {
+      font-size: 40px;
+      margin-bottom: 15px;
+      color: #cbd5e0;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 25px;
+    
+    &:hover {
+      background-color: #2d3748;
+      transform: translateY(-1px);
+    }
+    
+    i {
+      font-size: 12px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    
+    .btn-view {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      &:hover {
+        background-color: #3182ce;
+      }
+      
+      i {
+        font-size: 12px;
+      }
+    }
+  }
+}
