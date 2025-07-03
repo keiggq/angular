@@ -13,7 +13,6 @@ export class CustomersService {
   private apiUrl = 'http://localhost:8080/api/customers';
 
   constructor(private http: HttpClient) {}
-  
 
   getAllCustomers(): Observable<CustomerResponse[]> {
     return this.http.get<CustomerResponse[]>(this.apiUrl);

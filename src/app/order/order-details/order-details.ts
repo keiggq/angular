@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 })
 export class OrderDetailsComponent implements OnInit {
   order: OrderResponse | null = null;
-  item:  OrderItemResponse | null = null;
   
 
   constructor(

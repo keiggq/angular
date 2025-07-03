@@ -1,93 +1,93 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CustomersService } from '../../services/customers';
 import { CustomerResponse } from '../../interfaces/customer-response.interface';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-customers-list',
+  selector: 'app-customer-form',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './customer-form.html',
   styleUrls: ['./customer-form.scss']
 })
-export class CustomersListComponent implements OnInit {
-  searchName: string = '';
-  exactMatch: boolean = false;
-  filteredCustomers: CustomerResponse[] = [];
-  allCustomers: CustomerResponse[] = [];
-  isLoading: boolean = true;
-  errorMessage: string | null = null;
+export class CustomerFormComponent implements OnInit {
+  customer: CustomerResponse = {
+    id: 0,
+    name: '',
+    phone: '',
+    email: '',
+    discountCard: '',
+    discountRate: 0
+  };
+  
+  isEditMode = false;
+  errorMessages: string[] = [];
+  fieldErrors: { [key: string]: string } = {};
 
   constructor(
-    private customersService: CustomersService,
-    private router: Router
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router,
+    private customersService: CustomersService
+  ) { }
 
   ngOnInit(): void {
-    this.loadCustomers();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditMode = true;
+      this.loadCustomer(+id);
+    }
   }
 
-  loadCustomers(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
-
-    this.customersService.getAllCustomers().subscribe({
-      next: (customers) => {
-        this.allCustomers = customers;
-        this.filteredCustomers = [...customers];
-        this.isLoading = false;
+  loadCustomer(id: number): void {
+    this.customersService.getCustomerById(id).subscribe({
+      next: (customer) => {
+        this.customer = customer;
       },
-      error: (err) => {
-        console.error('Ошибка загрузки клиентов:', err);
-        this.errorMessage = 'Не удалось загрузить список клиентов';
-        this.isLoading = false;
-      }
+      error: (err: HttpErrorResponse) => this.handleError(err)
     });
   }
 
-  searchCustomers(): void {
-    if (!this.searchName) {
-      this.filteredCustomers = [...this.allCustomers];
-      return;
-    }
+  onSubmit(): void {
+    this.errorMessages = [];
+    this.fieldErrors = {};
 
-    const searchTerm = this.searchName.toLowerCase();
-    this.filteredCustomers = this.allCustomers.filter(customer => {
-      if (this.exactMatch) {
-        return customer.name.toLowerCase() === searchTerm;
-      } else {
-        return customer.name.toLowerCase().includes(searchTerm);
-      }
+    // Конвертируем discountRate из процентов в доли перед отправкой
+    const customerData = {
+      ...this.customer,
+      discountRate: this.customer.discountRate / 100
+    };
+
+    const operation = this.isEditMode
+      ? this.customersService.updateCustomer(this.customer.id, customerData)
+      : this.customersService.createCustomer(customerData);
+
+    operation.subscribe({
+      next: () => this.router.navigate(['/customers']),
+      error: (err: HttpErrorResponse) => this.handleError(err)
     });
   }
 
-  clearSearch(): void {
-    this.searchName = '';
-    this.filteredCustomers = [...this.allCustomers];
-  }
+  private handleError(error: HttpErrorResponse): void {
+    console.error('Error:', error);
 
-  viewCustomerOrders(customerId: number): void {
-    this.router.navigate(['/customers', customerId, 'orders']);
-  }
+    this.errorMessages = [];
+    this.fieldErrors = {};
 
-  editCustomer(customerId: number): void {
-    this.router.navigate(['/customers', customerId, 'edit']);
-  }
-
-  deleteCustomer(customerId: number): void {
-    if (confirm('Вы уверены, что хотите удалить этого клиента?')) {
-      this.customersService.deleteCustomer(customerId).subscribe({
-        next: () => {
-          this.allCustomers = this.allCustomers.filter(c => c.id !== customerId);
-          this.filteredCustomers = this.filteredCustomers.filter(c => c.id !== customerId);
-        },
-        error: (err) => {
-          console.error('Ошибка удаления клиента:', err);
-          this.errorMessage = 'Не удалось удалить клиента';
-        }
-      });
+    if (error.status === 400 && error.error?.errors) {
+      this.fieldErrors = Object.fromEntries(
+        Object.entries(error.error.errors)
+          .map(([field, messages]) => [field, (messages as string[]).join(', ')])
+      );
+      this.errorMessages = ['Пожалуйста, исправьте ошибки в форме'];
+    } else {
+      this.errorMessages = [error.error?.message || 'Произошла ошибка при сохранении'];
     }
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/customers']);
   }
 }

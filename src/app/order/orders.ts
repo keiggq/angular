@@ -4,6 +4,7 @@ import { OrdersService } from '../services/orders';
 import { OrderResponse } from '../interfaces/order-response.interface';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { OrderItemResponse } from '../interfaces/order-item-response.interface';
 
 @Component({
   selector: 'app-orders-list',
@@ -16,6 +17,8 @@ export class OrdersListComponent implements OnInit {
   filteredOrders: OrderResponse[] = [];
   searchId: number | null = null;
   isLoading = false;
+  
+
 
   constructor(
     private ordersService: OrdersService,

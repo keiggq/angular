@@ -3,17 +3,31 @@
 
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <label for="title">Название</label>
+      <label for="name">Название</label>
       <input type="text"
-             id="title"
-             formControlName="title"
-             [class.invalid]="title?.invalid && (title?.dirty || title?.touched)">
-      <div *ngIf="title?.invalid && (title?.dirty || title?.touched)" class="error-message">
-        <div *ngIf="title?.errors?.['required']">Title is required</div>
-        <div *ngIf="title?.errors?.['minlength']">Minimum length is 3 characters</div>
-        <div *ngIf="title?.errors?.['maxlength']">Maximum length is 100 characters</div>
+             id="name"
+             formControlName="name"
+             [class.invalid]="name?.invalid && (name?.dirty || name?.touched)">
+      <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="error-message">
+        <div *ngIf="name?.errors?.['required']">Title is required</div>
+        <div *ngIf="name?.errors?.['minlength']">Minimum length is 3 characters</div>
+        <div *ngIf="name?.errors?.['maxlength']">Maximum length is 100 characters</div>
       </div>
     </div>
+
+    <div class="form-group">
+      <label for="warrantyPeriod">Гарантия</label>
+      <input type="text"
+             id="warrantyPeriod"
+             formControlName="warrantyPeriod"
+             [class.invalid]="warrantyPeriod?.invalid && (warrantyPeriod?.dirty || warrantyPeriod?.touched)">
+      <div *ngIf="warrantyPeriod?.invalid && (warrantyPeriod?.dirty || warrantyPeriod?.touched)" class="error-message">
+        <div *ngIf="warrantyPeriod?.errors?.['required']">Title is required</div>
+        <div *ngIf="warrantyPeriod?.errors?.['minlength']">Minimum length is 3 characters</div>
+        <div *ngIf="name?.errors?.['maxlength']">Maximum length is 100 characters</div>
+      </div>
+    </div>
+    
 
     <div class="form-group">
       <label for="price">Цена</label>
@@ -29,27 +43,28 @@
     </div>
 
     <div class="form-group">
-      <label for="description">Количество</label>
-      <textarea id="description"
-                formControlName="description"
+      <label for="quantity">Количество</label>
+      <textarea id="quantity"
+                formControlName="quantity"
                 rows="4"
-                [class.invalid]="description?.invalid && (description?.dirty || description?.touched)"></textarea>
-      <div *ngIf="description?.invalid && (description?.dirty || description?.touched)" class="error-message">
-        <div *ngIf="description?.errors?.['required']">Description is required</div>
-        <div *ngIf="description?.errors?.['maxlength']">Maximum length is 1000 characters</div>
+                [class.invalid]="quantity?.invalid && (quantity?.dirty || quantity?.touched)"></textarea>
+      <div *ngIf="quantity?.invalid && (quantity?.dirty || quantity?.touched)" class="error-message">
+        <div *ngIf="quantity?.errors?.['required']">Description is required</div>
+        <div *ngIf="quantity?.errors?.['maxlength']">Maximum length is 1000 characters</div>
       </div>
     </div>
 
     <div class="form-group">
-      <label for="manufacturer">Гарантия</label>
-      <input type="text"
-             id="manufacturer"
-             formControlName="manufacturer"
-             [class.invalid]="manufacturer?.invalid && (manufacturer?.dirty || manufacturer?.touched)">
-      <div *ngIf="manufacturer?.invalid && (manufacturer?.dirty || manufacturer?.touched)" class="error-message">
-        <div *ngIf="manufacturer?.errors?.['required']">Manufacturer is required</div>
-        <div *ngIf="manufacturer?.errors?.['minlength']">Minimum length is 1 characters</div>
-        <div *ngIf="manufacturer?.errors?.['maxlength']">Maximum length is 100 characters</div>
+      <label for="manufacturerId">Производитель</label>
+      <select id="manufacturerId" formControlName="manufacturerId"
+              [class.invalid]="manufacturerId?.invalid && (manufacturerId?.touched || manufacturerId?.dirty)">
+        <option value="">Выберите производителя</option>
+        <option *ngFor="let manufacturer of manufacturers" [value]="manufacturer.id">
+          {{ manufacturer.name }}
+        </option>
+      </select>
+      <div *ngIf="manufacturerId?.invalid && (manufacturerId?.touched || manufacturerId?.dirty)" class="error-message">
+        <div *ngIf="manufacturerId?.errors?.['required']">Выберите производителя</div>
       </div>
     </div>
 

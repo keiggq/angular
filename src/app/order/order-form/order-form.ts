@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { OrdersService } from '../../services/orders';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,13 @@ export class OrderFormComponent implements OnInit {
   orderId: number | null = null;
   products: ProductResponse[] = [];
   isLoading = false;
+  statusOptions = [
+    { value: 'NEW', label: 'Новый' },
+    { value: 'PROCESSING', label: 'В обработке' },
+    { value: 'SHIPPED', label: 'Отправлен' },
+    { value: 'DELIVERED', label: 'Доставлен' },
+    { value: 'CANCELLED', label: 'Отменен' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -31,8 +38,15 @@ export class OrderFormComponent implements OnInit {
   ) {
     this.orderForm = this.fb.group({
       customerId: ['', [Validators.required, Validators.min(1)]],
-      orderAddress: ['', [Validators.required, Validators.minLength(3)]],
-      items: this.fb.array([], Validators.required)
+      customerName: ['', [Validators.required, Validators.minLength(3)]],
+      employeeId: [null],
+      employeeName: [''],
+      productId: ['', Validators.required],
+      productName: [''],
+      quantity: ['', [Validators.required, Validators.min(1)]],
+      date: [new Date().toISOString().split('T')[0], Validators.required],
+      totalPrice: [0, [Validators.required, Validators.min(0)]],
+      status: ['NEW', Validators.required]
     });
   }
 
@@ -45,70 +59,108 @@ export class OrderFormComponent implements OnInit {
       this.orderId = +id;
       this.loadOrder(this.orderId);
     }
-  }
 
-  get items(): FormArray {
-    return this.orderForm.get('items') as FormArray;
-  }
+    // Подписываемся на изменения productId для автоматического заполнения productName
+    this.orderForm.get('productId')?.valueChanges.subscribe(productId => {
+      const selectedProduct = this.products.find(p => p.id === productId);
+      if (selectedProduct) {
+        this.orderForm.patchValue({
+          productName: selectedProduct.name,
+          totalPrice: selectedProduct.price * (this.orderForm.get('quantity')?.value || 1)
+        });
+      }
+    });
 
-  createItem(): FormGroup {
-    return this.fb.group({
-      productId: ['', Validators.required],
-      quantity: ['', [Validators.required, Validators.min(1)]]
+    // Подписываемся на изменения quantity для пересчёта totalPrice
+    this.orderForm.get('quantity')?.valueChanges.subscribe(quantity => {
+      const productId = this.orderForm.get('productId')?.value;
+      if (productId) {
+        const selectedProduct = this.products.find(p => p.id === productId);
+        if (selectedProduct) {
+          this.orderForm.patchValue({
+            totalPrice: selectedProduct.price * quantity
+          }, { emitEvent: false });
+        }
+      }
     });
   }
 
-  addItem(): void {
-    this.items.push(this.createItem());
-  }
-
-  removeItem(index: number): void {
-    this.items.removeAt(index);
-  }
-
   loadProducts(): void {
+    this.isLoading = true;
     this.productsService.getAllProducts().subscribe({
-      next: (products) => this.products = products,
-      error: (err) => console.error('Ошибка загрузки продуктов', err)
+      next: (products) => {
+        this.products = products;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Ошибка загрузки продуктов', err);
+        this.isLoading = false;
+      }
     });
   }
 
   loadOrder(id: number): void {
+    this.isLoading = true;
     this.ordersService.getOrderById(id).subscribe({
       next: (order) => {
-        // Clear existing items
-        while (this.items.length) {
-          this.items.removeAt(0);
-        }
-        
-        // Add items from order
-        order.items.forEach(item => {
-          this.items.push(this.fb.group({
-            productId: [item.productId, Validators.required],
-            quantity: [item.quantity, [Validators.required, Validators.min(1)]]
-          }));
-        });
-
         this.orderForm.patchValue({
           customerId: order.customerId,
+          customerName: order.customerName,
+          employeeId: order.employeeId,
+          employeeName: order.employeeName,
+          productId: order.productId,
+          productName: order.productName,
+          quantity: order.quantity,
+          date: this.formatDateForInput(order.date),
+          totalPrice: order.totalPrice,
+          status: order.status
         });
+        this.isLoading = false;
       },
-      error: (err) => console.error('Ошибка загрузки заказа', err)
+      error: (err) => {
+        console.error('Ошибка загрузки заказа', err);
+        this.isLoading = false;
+      }
     });
   }
 
   onSubmit(): void {
-    if (this.orderForm.invalid || this.items.length === 0) return;
+    if (this.orderForm.invalid) {
+      this.markAllAsTouched();
+      return;
+    }
 
-    const orderData: OrderRequest = this.orderForm.value;
+    this.isLoading = true;
+    const formValue = this.orderForm.value;
+    const orderData: OrderRequest = {
+      ...formValue,
+      date: new Date(formValue.date).toISOString()
+    };
+
     const operation = this.isEditMode && this.orderId
       ? this.ordersService.updateOrder(this.orderId, orderData)
       : this.ordersService.createOrder(orderData);
 
     operation.subscribe({
-      next: () => this.router.navigate(['/orders']),
-      error: (err) => console.error('Ошибка сохранения заказа', err)
+      next: () => {
+        this.router.navigate(['/orders']);
+      },
+      error: (err) => {
+        console.error('Ошибка сохранения заказа', err);
+        this.isLoading = false;
+      }
     });
+  }
+
+  private markAllAsTouched(): void {
+    Object.values(this.orderForm.controls).forEach(control => {
+      control.markAsTouched();
+    });
+  }
+
+  private formatDateForInput(date: string | Date): string {
+    const dateObj = new Date(date);
+    return dateObj.toISOString().split('T')[0];
   }
 
   formatCurrency(amount: number): string {

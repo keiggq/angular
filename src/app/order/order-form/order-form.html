@@ -1,94 +1,179 @@
 <div class="order-form-container">
   <h2>{{ isEditMode ? 'Редактировать заказ' : 'Создать новый заказ' }}</h2>
-
-  <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="customerId">ID покупателя *</label>
-      <input type="number"
-             id="customerId"
-             formControlName="customerId"
-             [class.invalid]="orderForm.get('customerId')?.invalid &&
-                        (orderForm.get('customerId')?.dirty || orderForm.get('customerId')?.touched)">
-      <div *ngIf="orderForm.get('customerId')?.invalid &&
-                 (orderForm.get('customerId')?.dirty || orderForm.get('customerId')?.touched)"
-           class="error-message">
-        <div *ngIf="orderForm.get('customerId')?.errors?.['required']">
-          Укажите ID покупателя
+  
+  <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" class="order-form">
+    <!-- Customer Section -->
+    <div class="form-section">
+      <h3>Информация о клиенте</h3>
+      
+      <div class="form-group">
+        <label for="customerId">ID клиента *</label>
+        <input 
+          id="customerId" 
+          type="number" 
+          formControlName="customerId" 
+          class="form-control"
+          [class.is-invalid]="orderForm.get('customerId')?.invalid && orderForm.get('customerId')?.touched"
+        >
+        <div *ngIf="orderForm.get('customerId')?.invalid && orderForm.get('customerId')?.touched" class="invalid-feedback">
+          Введите корректный ID клиента (минимум 1)
         </div>
-        <div *ngIf="orderForm.get('customerId')?.errors?.['min']">
-          ID должен быть положительным числом
+      </div>
+      
+      <div class="form-group">
+        <label for="customerName">Имя клиента *</label>
+        <input 
+          id="customerName" 
+          type="text" 
+          formControlName="customerName" 
+          class="form-control"
+          [class.is-invalid]="orderForm.get('customerName')?.invalid && orderForm.get('customerName')?.touched"
+        >
+        <div *ngIf="orderForm.get('customerName')?.invalid && orderForm.get('customerName')?.touched" class="invalid-feedback">
+          Имя клиента должно содержать минимум 3 символа
         </div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="orderAddress">Адрес доставки *</label>
-      <input type="text"
-             id="orderAddress"
-             formControlName="orderAddress"
-             [class.invalid]="orderForm.get('orderAddress')?.invalid &&
-                        (orderForm.get('orderAddress')?.dirty || orderForm.get('orderAddress')?.touched)">
-      <div *ngIf="orderForm.get('orderAddress')?.invalid &&
-                 (orderForm.get('orderAddress')?.dirty || orderForm.get('orderAddress')?.touched)"
-           class="error-message">
-        <div *ngIf="orderForm.get('orderAddress')?.errors?.['required']">
-          Укажите адрес доставки
+    <!-- Employee Section (Optional) -->
+    <div class="form-section">
+      <h3>Информация о сотруднике</h3>
+      
+      <div class="form-group">
+        <label for="employeeId">ID сотрудника</label>
+        <input 
+          id="employeeId" 
+          type="number" 
+          formControlName="employeeId" 
+          class="form-control"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="employeeName">Имя сотрудника</label>
+        <input 
+          id="employeeName" 
+          type="text" 
+          formControlName="employeeName" 
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <!-- Product Section -->
+    <div class="form-section">
+      <h3>Информация о товаре</h3>
+      
+      <div class="form-group">
+        <label for="productId">Товар *</label>
+        <select 
+          id="productId" 
+          formControlName="productId" 
+          class="form-control"
+          [class.is-invalid]="orderForm.get('productId')?.invalid && orderForm.get('productId')?.touched"
+        >
+          <option value="">Выберите товар</option>
+          <option *ngFor="let product of products" [value]="product.id">
+            {{ product.name }} - {{ formatCurrency(product.price) }}
+          </option>
+        </select>
+        <div *ngIf="orderForm.get('productId')?.invalid && orderForm.get('productId')?.touched" class="invalid-feedback">
+          Пожалуйста, выберите товар
         </div>
-        <div *ngIf="orderForm.get('orderAddress')?.errors?.['minlength']">
-          Минимум 3 символа
+      </div>
+      
+      <div class="form-group">
+        <label for="quantity">Количество *</label>
+        <input 
+          id="quantity" 
+          type="number" 
+          formControlName="quantity" 
+          class="form-control"
+          min="1"
+          [class.is-invalid]="orderForm.get('quantity')?.invalid && orderForm.get('quantity')?.touched"
+        >
+        <div *ngIf="orderForm.get('quantity')?.invalid && orderForm.get('quantity')?.touched" class="invalid-feedback">
+          Минимальное количество: 1
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="productName">Название товара</label>
+        <input 
+          id="productName" 
+          type="text" 
+          formControlName="productName" 
+          class="form-control"
+          readonly
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="totalPrice">Общая стоимость</label>
+        <input 
+          id="totalPrice" 
+          type="text" 
+          formControlName="totalPrice" 
+          class="form-control"
+          readonly
+          [value]="formatCurrency(orderForm.get('totalPrice')?.value || 0)"
+        >
+      </div>
+    </div>
+
+    <!-- Order Details -->
+    <div class="form-section">
+      <h3>Детали заказа</h3>
+      
+      <div class="form-group">
+        <label for="date">Дата заказа *</label>
+        <input 
+          id="date" 
+          type="date" 
+          formControlName="date" 
+          class="form-control"
+          [class.is-invalid]="orderForm.get('date')?.invalid && orderForm.get('date')?.touched"
+        >
+        <div *ngIf="orderForm.get('date')?.invalid && orderForm.get('date')?.touched" class="invalid-feedback">
+          Укажите дату заказа
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="status">Статус *</label>
+        <select 
+          id="status" 
+          formControlName="status" 
+          class="form-control"
+          [class.is-invalid]="orderForm.get('status')?.invalid && orderForm.get('status')?.touched"
+        >
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+        <div *ngIf="orderForm.get('status')?.invalid && orderForm.get('status')?.touched" class="invalid-feedback">
+          Пожалуйста, выберите статус
         </div>
       </div>
     </div>
 
-    <div class="items-section">
-      <h3>Товары в заказе</h3>
-
-      <div formArrayName="items">
-        <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="item-row">
-          <div class="form-group">
-            <label>Товар *</label>
-            <select formControlName="productId" class="product-select">
-              <option value="">Выберите товар</option>
-              <option *ngFor="let product of products" [value]="product.id">
-                {{ product.name }} ({{ formatCurrency(product.price) }})
-              </option>
-            </select>
-            <div *ngIf="item.get('productId')?.invalid && item.get('productId')?.touched" class="error-message">
-              Выберите товар
-            </div>
-          </div>
-
-          <div class="form-group quantity-group">
-            <label>Количество *</label>
-            <input type="number" 
-                   formControlName="quantity" 
-                   min="1"
-                   [class.invalid]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
-            <div *ngIf="item.get('quantity')?.invalid && item.get('quantity')?.touched" class="error-message">
-              Минимальное количество: 1
-            </div>
-          </div>
-
-          <button type="button" (click)="removeItem(i)" class="btn-remove">
-            Удалить
-          </button>
-        </div>
-      </div>
-
-      <button type="button" (click)="addItem()" class="btn-add-item">
-        + Добавить товар
-      </button>
-    </div>
-
+    <!-- Form Actions -->
     <div class="form-actions">
-      <button type="submit"
-              class="btn-submit"
-              [disabled]="orderForm.invalid || items.length === 0">
-        {{ isEditMode ? 'Сохранить изменения' : 'Создать заказ' }}
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="orderForm.invalid || isLoading"
+      >
+        <span *ngIf="!isLoading">{{ isEditMode ? 'Обновить заказ' : 'Создать заказ' }}</span>
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       </button>
-      <button type="button"
-              class="btn-cancel"
-              (click)="cancel()">
+      
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="cancel()"
+        [disabled]="isLoading"
+      >
         Отмена
       </button>
     </div>

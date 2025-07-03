@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductsService } from '../../services/products';
+import { ManufacturerService } from '../../services/manufacture';
 import { ProductResponse } from '../../interfaces/product-response.interface';
 import { ProductRequest } from '../../interfaces/product-request.interface';
-import { Decimal } from 'decimal.js';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.scss']
 })
@@ -21,25 +21,27 @@ export class ProductFormComponent implements OnInit {
   isEditMode = false;
   productId: number | null = null;
   product: ProductResponse | null = null;
+  manufacturers: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private productsService: ProductsService,
+    private manufacturerService: ManufacturerService,
     private route: ActivatedRoute,
     private router: Router
   ) {
     this.productForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
+      name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
+      manufacturerId: [null, Validators.required],
       price: ['', [Validators.required, Validators.min(0.01)]],
-      description: ['', [Validators.required, Validators.maxLength(1000)]],
-      manufacturer: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]]
+      quantity: ['', [Validators.required, Validators.max(1000)]],
+      warrantyPeriod: ['', [Validators.required, Validators.max(120)]]
     });
-  }
-  cancel(): void {
-    this.router.navigate(['/products']);
   }
 
   ngOnInit(): void {
+    this.loadManufacturers();
+    
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditMode = true;
@@ -49,15 +51,23 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
+  loadManufacturers(): void {
+    this.manufacturerService.getManufacturers().subscribe({
+      next: (data) => this.manufacturers = data,
+      error: (err) => console.error('Error loading manufacturers', err)
+    });
+  }
+
   loadProduct(id: number): void {
     this.productsService.getProductById(id).subscribe({
       next: (product) => {
         this.product = product;
         this.productForm.patchValue({
-          id: product.id,
+          name: product.name,
+          manufacturerId: product.manufacturerId,
           price: product.price,
-          description: product.quantity,
-          manufacturer: product.warrantyPeriod
+          quantity: product.quantity,
+          warrantyPeriod: product.warrantyPeriod
         });
       },
       error: (err) => console.error('Error loading product', err)
@@ -70,7 +80,14 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
-    const productData: ProductRequest = this.productForm.value;
+    const formValue = this.productForm.value;
+    const productData: ProductRequest = {
+      name: formValue.name,
+      manufacturerId: Number(formValue.manufacturerId),
+      price: Number(formValue.price),
+      quantity: Number(formValue.quantity),
+      warrantyPeriod: Number(formValue.warrantyPeriod)
+    };
 
     if (this.isEditMode && this.productId) {
       this.productsService.updateProduct(this.productId, productData).subscribe({
@@ -85,8 +102,13 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
-  get title() { return this.productForm.get('title'); }
+  cancel(): void {
+    this.router.navigate(['/products']);
+  }
+
+  get name() { return this.productForm.get('name'); }
+  get manufacturerId() { return this.productForm.get('manufacturerId'); }
   get price() { return this.productForm.get('price'); }
-  get description() { return this.productForm.get('description'); }
-  get manufacturer() { return this.productForm.get('manufacturer'); }
+  get quantity() { return this.productForm.get('quantity'); }
+  get warrantyPeriod() { return this.productForm.get('warrantyPeriod'); }
 }

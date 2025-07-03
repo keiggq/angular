@@ -5,7 +5,7 @@
     <p><strong>Покупатель:</strong> {{ order.customerName }} (ID: {{ order.customerId }})</p>
     <p><strong>Сотрудник:</strong> {{ order.employeeName || 'Не указан' }} <span *ngIf="order.employeeId">(ID: {{ order.employeeId }})</span></p>
     <p><strong>Дата заказа:</strong> {{ formatDateTime(order.date) }}</p>
-    <p><strong>Общая сумма:</strong> {{ order.totalPrice | currency:'RUB':'symbol':'1.2-2' }}</p>
+    <p><strong>Общая сумма:</strong> {{ formatCurrency(order.totalPrice) }}</p>
     <p><strong>Статус:</strong> {{ getStatusName(order.status) }}</p>
   </div>
 
@@ -16,22 +16,15 @@
         <th>ID товара</th>
         <th>Наименование</th>
         <th>Количество</th>
-        <th>Цена за единицу</th>
+        <th>Сумма</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>
-          <div *ngFor="let item of order.items">
-          {{ item.productName }} (ID: {{ item.productId }})
-          </div>
-        </td>
-        <td>
-         <div *ngFor="let item of order.items">
-          {{ item.quantity }}
-          </div>
-        </td>
-        <td>{{ order.totalPrice | currency:'RUB':'symbol-narrow':'1.2-2' }}</td> 
+        <td>{{ order.productId }}</td>
+        <td>{{ order.productName }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ formatCurrency(order.totalPrice) }}</td>
       </tr>
     </tbody>
   </table>

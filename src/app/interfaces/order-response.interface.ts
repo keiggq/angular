@@ -7,7 +7,9 @@ export interface OrderResponse {
   employeeId?: number;
   employeeName?: string;
   date: Date;
-  items: OrderItemResponse[];
+  productId: number;
+  quantity: number;
+  productName: string;
   totalPrice: number;
   status: string;
   createdAt: string;

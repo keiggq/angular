@@ -24,8 +24,6 @@
           <th>ID</th>
           <th>Клиент</th>
           <th>Сотрудник</th>
-          <th>Товар</th>
-          <th>Количество</th>
           <th>Дата</th>
           <th>Сумма</th>
           <th>Статус</th>
@@ -37,16 +35,6 @@
           <td>{{ order.id }}</td>
           <td>{{ order.customerName }} (ID: {{ order.customerId }})</td>
           <td>{{ order.employeeName || 'Не назначен' }} <span *ngIf="order.employeeId">(ID: {{ order.employeeId }})</span></td>
-          <td>
-            <div *ngFor="let item of order.items">
-              {{ item.productName }} (ID: {{ item.productId }})
-            </div>
-          </td>
-          <td>
-            <div *ngFor="let item of order.items">
-              {{ item.quantity }}
-            </div>
-          </td>
           <td>{{ order.date | date:'dd.MM.yyyy HH:mm' }}</td>
           <td>{{ formatCurrency(order.totalPrice) }}</td>
           <td>

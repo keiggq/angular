@@ -1,172 +1,137 @@
-.container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
+// Основные стили контейнера
+.customer-form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  
   h2 {
     margin-top: 0;
     color: #333;
+    padding-bottom: 1rem;
     border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    font-size: 1.5rem;
   }
+}
 
-  .search-container {
-    margin-bottom: 20px;
+// Стили для сообщений об ошибках
+.error-messages {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #ffebee;
+  border-radius: 0.25rem;
+  color: #c62828;
+  
+  .error-message {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+}
 
-    .search-form {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+// Стили для формы
+form {
+  display: grid;
+  gap: 1.5rem;
+}
 
-      input {
-        flex: 1;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-
-      select {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-
-      button {
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        border: none;
-        background: #007bff;
-        color: white;
-
-        &:hover {
-          background: #0069d9;
-        }
-
-        &:last-child {
-          background: #f0f0f0;
-          color: #333;
-          border: 1px solid #ddd;
-
-          &:hover {
-            background: #e0e0e0;
-          }
-        }
-      }
+// Стили для групп полей формы
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+  
+  label {
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+  }
+  
+  input, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: border-color 0.15s;
+    
+    &:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    &.invalid {
+      border-color: #dc3545;
     }
   }
-
-  .no-data {
-    padding: 20px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    color: #6c757d;
+  
+  .field-error {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
   }
+}
 
-  .table-container {
-    margin-bottom: 20px;
-    overflow-x: auto;
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-
-      thead {
-        background-color: #f8f9fa;
-
-        th {
-          padding: 12px 15px;
-          text-align: left;
-          font-weight: 600;
-          border-bottom: 2px solid #dee2e6;
-        }
-      }
-
-      tbody {
-        tr {
-          border-bottom: 1px solid #dee2e6;
-
-          &:hover {
-            background-color: #f8f9fa;
-          }
-
-          td {
-            padding: 12px 15px;
-            vertical-align: middle;
-          }
-        }
-      }
-    }
-  }
-
-  .actions-cell {
-    .actions {
-      display: flex;
-      gap: 8px;
-
-      button {
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        border: none;
-
-        i {
-          font-size: 14px;
-        }
-
-        &.btn-view {
-          background: #17a2b8;
-          color: white;
-
-          &:hover {
-            background: #138496;
-          }
-        }
-
-        &.btn-edit {
-          background: #ffc107;
-          color: #212529;
-
-          &:hover {
-            background: #e0a800;
-          }
-        }
-
-        &.btn-delete {
-          background: #dc3545;
-          color: white;
-
-          &:hover {
-            background: #c82333;
-          }
-        }
-      }
-    }
-  }
-
-  .btn-add {
-    padding: 8px 16px;
-    background: #28a745;
-    color: white;
+// Стили для кнопок
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  
+  button {
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 14px;
-
-    &:hover {
-      background: #218838;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
   }
+  
+  .btn-submit {
+    background-color: #28a745;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #218838;
+    }
+  }
+  
+  .btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    
+    &:hover {
+      background-color: #5a6268;
+    }
+  }
+}
+
+// Адаптивные стили
+@media (max-width: 768px) {
+  .customer-form-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Стили для иконок (если используете Font Awesome)
+.fas {
+  font-size: 0.9rem;
 }

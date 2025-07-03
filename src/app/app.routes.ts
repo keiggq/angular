@@ -6,7 +6,7 @@ import { ProductFormComponent } from './product/product-form/product-form';
 import { OrderFormComponent } from './order/order-form/order-form';
 import { OrderDetailsComponent } from './order/order-details/order-details';
 import { CustomerDetailsComponent } from './customers/customer-details/customer-details';
-import { CustomersListComponent } from './customers/customer-form/customer-form';
+import { CustomerFormComponent } from './customers/customer-form/customer-form';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
@@ -14,8 +14,8 @@ import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
   { path: 'customers', component: CustomersComponent },
-  { path: 'customers/new', component: CustomersListComponent },
-  { path: 'customers/edit/:id', component: CustomersListComponent },
+  { path: 'customers/new', component: CustomerFormComponent },
+  { path: 'customers/edit/:id', component: CustomerFormComponent },
   { path: 'orders', component: OrdersListComponent },
   { path: 'products', component: ProductsComponent },
   { path: 'products/new', component: ProductFormComponent },
